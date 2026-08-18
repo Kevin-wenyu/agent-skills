@@ -36,6 +36,24 @@ Current contents:
 
 All paths are `skills/<name>/`.
 
+### Pipeline progress (which project each skill belongs to, and what's left)
+
+This is the answer to "I only built the WeChat side, how do I pick book-writing back up later": the `kevin-book-*` / `kevin-wechat-*` prefix already groups each pipeline's skills so they sort together inside the flat `skills/` folder, and this checklist tracks completion per pipeline. Resuming a pipeline later means adding the next unchecked skill below with the same prefix — nothing about the directory layout changes.
+
+**Book-writing pipeline** — 1/5 stages built, self-authored, unvalidated:
+- [x] 调研与规划 — `kevin-book-research-planning`
+- [ ] 内容写作
+- [ ] 构建与组装
+- [ ] 版本管理
+- [ ] 多格式输出
+
+**WeChat-article pipeline** — upstream done, downstream is the real production system, not something to (re-)build:
+- [x] 选题生成 — `kevin-wechat-topic-gen` (self-authored, unvalidated)
+- [x] 深度调研 — `kevin-wechat-research` (self-authored, unvalidated)
+- [x] 写作 → 审校 → 配图 → 发布 — covered by `write-article`, `newsletter-digest`, `fireworks-tech-graph`, `architecture-diagram`, `excalidraw-diagram-generator` (all mirrored from `~/.claude/skills`, already in production — do not scaffold new skills for these stages)
+
+**Other projects** — none started yet. See "Future scope" below for the naming convention to use when one starts.
+
 ### Future scope
 
 The user has more projects beyond book-writing and WeChat that will eventually need skills or plugins here — this repo isn't scoped to just these two pipelines long-term. When a new unrelated project starts, give it its own secondary prefix the same way (`kevin-<project>-*`) rather than overloading `kevin-book-*` or `kevin-wechat-*`.
