@@ -6,13 +6,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This repository's goal is to create Claude Skills for ongoing/long-term use (per the user: "创建使用的skill，长期维护" — create skills for actual use, maintained long-term). It is a skills workspace: each skill should live in its own directory following the standard Skill anatomy (`SKILL.md` + optional `scripts/`, `references/`, `assets/`), built and iterated using the `skill-creator` skill's draft → test → review → improve loop.
 
-Current contents beyond scaffolding:
+Current contents:
 
-- `Agent-Skills-Complete-Guide-zh-v260411.pdf` — a Chinese-language reference guide on Agent Skills; likely background reading for how skills should be authored here.
-- `.serena/` — Serena MCP project configuration (no memories recorded yet).
-- `.claude/` — Claude Code local settings.
+- `Agent-Skills-Complete-Guide-zh-v260411.pdf` — a Chinese-language reference guide on Agent Skills (花叔's 橙皮书). Source of the 5 design principles below and of a 6-pattern taxonomy (检查清单型/Checklist, 多方案选择型/Options, 多阶段流水线型/Pipeline, 外部API集成型/Integration, 多Agent协作型/Swarm, 思维蒸馏型/Distillation) used to classify new skills before drafting them.
+- `book-research-planning/` — first skill. Stage 1 of a planned 5-stage book-writing pipeline (Pipeline pattern): 调研与规划 → 内容写作 → 构建与组装 → 版本管理 → 多格式输出. Turns a book idea into a confirmed `PROJECT.md` (chapter structure, status per chapter) plus per-chapter research notes under `research/`, ready for a future "内容写作" skill to consume. Only stage 1 has been built so far — build order is deliberately one-at-a-time: use each stage in anger before designing the next, rather than scaffolding all 5 up front.
+- `.serena/` — Serena MCP project configuration (gitignored).
+- `.claude/` — Claude Code local settings (gitignored).
 
-No individual skills exist in this repo yet, and there is no git repository initialized.
+Git was initialized once the first skill landed (see "Working here" below); history starts from the `book-research-planning` commit.
+
+**Note on tooling:** the `skill-creator` skill referenced below is a Claude Code concept and was not available as an invocable tool when `book-research-planning` was authored (in a Cowork session). It was drafted directly against the anatomy and 5 principles from the guide instead. If `skill-creator` becomes available in a given session, prefer it per the instruction below; otherwise draft freehand but hold to the same structure (frontmatter with `name`/`description`, numbered steps, explicit boundaries section) and principles.
 
 ## Design principles (from `Agent-Skills-Complete-Guide-zh-v260411.pdf`)
 
