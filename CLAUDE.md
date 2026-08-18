@@ -1,0 +1,36 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project purpose
+
+This repository's goal is to create Claude Skills for ongoing/long-term use (per the user: "创建使用的skill，长期维护" — create skills for actual use, maintained long-term). It is a skills workspace: each skill should live in its own directory following the standard Skill anatomy (`SKILL.md` + optional `scripts/`, `references/`, `assets/`), built and iterated using the `skill-creator` skill's draft → test → review → improve loop.
+
+Current contents beyond scaffolding:
+
+- `Agent-Skills-Complete-Guide-zh-v260411.pdf` — a Chinese-language reference guide on Agent Skills; likely background reading for how skills should be authored here.
+- `.serena/` — Serena MCP project configuration (no memories recorded yet).
+- `.claude/` — Claude Code local settings.
+
+No individual skills exist in this repo yet, and there is no git repository initialized.
+
+## Design principles (from `Agent-Skills-Complete-Guide-zh-v260411.pdf`)
+
+Every skill authored in this repo should follow these 5 principles (source: guide's "5个设计原则" section):
+
+1. **Confirm before acting (先确认再动手)** — For anything with real decisions or cost to redo, have the skill present options and get user sign-off before doing the expensive step. Don't let it pick a direction and run 2000 words deep before the user can object — that work is wasted and pollutes context once it's wrong.
+2. **Save as you go (边做边存)** — In long-running skills (research, multi-step generation), write results to disk incrementally as each stage/batch completes, not all at once at the end. Sessions can be cut off (network, token limits, closed tab); incremental saves mean nothing is lost.
+3. **Modular and composable (模块化可组合)** — One skill does one thing. Don't bundle a whole pipeline (e.g. "topic selection + research + draft + review + images") into a single SKILL.md — it bloats context and kills flexibility. Split into small skills that can be run independently or chained, Unix-pipe style.
+4. **Offer choices, not answers (给选择不给答案)** — Prefer presenting ~3 options over handing back one finished answer. This keeps the user making the real decisions, so the output carries their judgment, not just the AI's — and it's also the main lever for avoiding generic "AI-flavored" output. The skill is an advisor, not the decision-maker.
+5. **Amplify, don't replace (放大你，而不是替代你)** — A skill should flag issues / propose edits and let the user decide what to accept, rather than auto-applying changes. The shape is input → proposal → human decision → execution → human confirmation, not input → output with no human in the loop. That's what distinguishes a skill from a plain automation script.
+
+**Maintenance guidance from the same guide:**
+- Skills evolve with use — expect to revise a skill's steps/checklist many times after real usage surfaces gaps. Track skill changes with git so you can see how a skill matured and roll back a version that regresses.
+- If a skill's SKILL.md grows past ~3000 Chinese characters (roughly analogous to the ~500-line guidance below), split it into two — long skills measurably hurt the AI's execution accuracy. Short and focused beats long and comprehensive.
+
+## Working here
+
+- When asked to build a new skill, use the `skill-creator` skill rather than freehand authoring — it defines the SKILL.md structure, eval/test workflow, and description-optimization process this project should follow, and apply the 5 principles above while drafting.
+- Each skill gets its own top-level directory (kebab-case, matching its `name` in SKILL.md frontmatter). Keep SKILL.md under ~500 lines; push large reference material into `references/` and executable helpers into `scripts/`.
+- Put this repo under git once the first skill is added, and commit as skills iterate — the guide's maintenance advice above depends on having history to look back through.
+- Once the first skill(s) land, update this CLAUDE.md with the actual directory layout and any repo-wide conventions that emerge (e.g., shared script libraries, a common test/eval runner) — don't leave this section describing an empty repo once it isn't one.
