@@ -14,6 +14,7 @@ agent-skills/
 │   ├── kevin-book-research-planning/
 │   ├── kevin-wechat-topic-gen/
 │   ├── kevin-wechat-research/
+│   ├── kevin-wechat-deepen/
 │   ├── kevin-wechat-proofreading/
 │   ├── kevin-wechat-write-article/       # 调用名仍是 write-article，见下方说明
 │   ├── kevin-wechat-newsletter-digest/   # 调用名仍是 newsletter-digest
@@ -45,6 +46,7 @@ agent-skills/
 | `kevin-book-research-planning` | 同左 | 写书流水线第1阶段：把模糊的书想法整理成确认过的章节结构 + 逐章调研笔记 | 已建，未验证，未注册为可调用 skill | 这个仓库里直接改 |
 | `kevin-wechat-topic-gen` | 同左 | 公众号选题生成：给一个话题，产出3-4个真正有差异的方向，带优劣分析，交用户选 | 已建，未验证 | 这个仓库里直接改 |
 | `kevin-wechat-research` | 同左 | 公众号深度调研：选题定了之后按信息源优先级搜索，边搜边存，产出结构化简报 | 已建，未验证 | 这个仓库里直接改 |
+| `kevin-wechat-deepen` | 同左 | 拔高：检查文章核心判断有没有Kevin自己的专业经验支撑，没有就问本人要，不编造，不是扩写/堆案例 | 已建，未验证 | 这个仓库里直接改 |
 | `kevin-wechat-proofreading` | 同左 | 初稿写完后的AI味+细节审校，不查事实（write-article已管），独立子agent跑 | 已建，未验证 | 这个仓库里直接改 |
 | `kevin-wechat-write-article` | `write-article` | Kevin原创文章写作：声音规则 + 3种结构分支 + 发布前检查清单 | **生产在用** | 源头 `~/.claude/skills/write-article` 改，改完手动同步过来 |
 | `kevin-wechat-newsletter-digest` | `newsletter-digest` | 编译/汇总类文章（技术周刊、链接合集）处理，独立子agent核实取代同模型自查 | **生产在用** | 同上，源头改 |
@@ -72,6 +74,7 @@ npx skills add yizhiyanhua-ai/fireworks-tech-graph
 - [x] 选题生成 → `kevin-wechat-topic-gen`
 - [x] 深度调研 → `kevin-wechat-research`
 - [x] 写作 → `write-article`
+- [x] 拔高（可选） → `kevin-wechat-deepen`（判断句有没有Kevin自己的经验支撑，没有就问本人，不编）
 - [x] AI味+细节审校 → `kevin-wechat-proofreading`（只管AI味和细节，事实核查是`write-article`自己的事，独立子agent跑）
 - [x] 配图 → 发布 → 3 个配图 skill / `newsletter-digest`（编译类走这个而不是`write-article`）
 
