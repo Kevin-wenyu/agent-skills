@@ -34,6 +34,12 @@ Every self-authored skill should hold to these 5 (source: an external Chinese-la
 
 Self-authored skills should also hold to the concreteness bar the mirrored production skills demonstrate: real positive **and** negative examples (not abstract templates), hard constraints stated as rules rather than preferences, and anti-rationalization tables that name a specific shortcut and rebut it (e.g. `write-article`'s voice rules, `fireworks-tech-graph`'s 反合理化 table).
 
+## Verification: default to independent review, but verify the reviewer too
+
+For anything independently verifiable — mechanical checks (counting a pattern, checking a paragraph length), or checking a quoted claim against its source — default to spinning up an independent subagent to review, without waiting to be asked. Proven twice in one session (`kevin-wechat-proofreading` catching a referential-clarity bug; an ad hoc review agent catching a real footnote-precision issue) to reliably catch what the same context that produced the content can't see in itself.
+
+This is not a full solution, and don't treat it as one. The same session also had the independent reviewer fabricate a finding — claim a source said something it didn't — that only got caught because it was re-verified against the primary source directly. Two distinct failure modes, both need guarding against separately: the *author* context misses its own errors (independent review fixes this), and the *reviewer* context can also misreport what it read (only re-verification against the primary source fixes this — a second AI opinion isn't ground truth just because it's independent). For judgments that depend on the user's own domain authority (is this analogy actually accurate, is this deep enough), no amount of independent review substitutes for asking the user directly — an independent agent has the same blind spot the original author does there.
+
 ## Building a new skill
 
 Use the `skill-creator` skill rather than authoring freehand — it defines the SKILL.md structure, eval/test workflow, and description-optimization process this project follows. Apply the 5 principles above while drafting. If `skill-creator` is genuinely unavailable, draft freehand against the same anatomy (frontmatter with `name`/`description`, numbered steps, explicit boundaries section) and principles instead of skipping structure.
