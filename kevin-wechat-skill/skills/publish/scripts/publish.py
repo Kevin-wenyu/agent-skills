@@ -328,11 +328,28 @@ def _fix_pre_blocks(html: str) -> str:
     return html
 
 
+def _strip_footnote_anchors(html: str) -> str:
+    """去掉脚注的页内跳转锚点（id="fnref:N" / href="#fn:N" 这类），
+    微信草稿接口会把这种结构判定成非法内容（errcode 45166），
+    而且微信文章阅读也用不上"点数字跳文末、点↩跳回来"这种网页交互，
+    只保留视觉效果：上标数字 + 文末编号列表。"""
+    html = re.sub(
+        r'<sup id="fnref\d*:\w+"><a class="footnote-ref" href="#fn:\w+">(\d+)</a></sup>',
+        r'<sup class="footnote-ref">\1</sup>',
+        html,
+    )
+    html = re.sub(r'<li id="fn:\w+">', '<li>', html)
+    html = re.sub(r'<a class="footnote-backref"[^>]*>(?:&#8617;|↩)</a>', '', html)
+    html = re.sub(r'&#160;(?=</p>)', '', html)
+    return html
+
+
 def md_to_html(md_text: str) -> str:
     body_html = markdown.markdown(
         md_text,
         extensions=["tables", "fenced_code", "footnotes"],
     )
+    body_html = _strip_footnote_anchors(body_html)
     full_html = f"<html><head>{WECHAT_CSS}</head><body>{body_html}</body></html>"
     inliner = css_inline.CSSInliner()
     inlined = inliner.inline(full_html)

@@ -328,11 +328,32 @@ def _fix_pre_blocks(html: str) -> str:
     return html
 
 
+def _strip_footnote_anchors(html: str) -> str:
+    """去掉脚注的页内跳转锚点（id="fnref:N" / href="#fn:N" 这类），
+    微信草稿接口会把这种结构判定成非法内容（errcode 45166），
+    而且微信文章阅读也用不上"点数字跳文末、点↩跳回来"这种网页交互，
+    只保留视觉效果：上标数字 + 文末编号列表。"""
+    # 正文里的引用角标：<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>
+    html = re.sub(
+        r'<sup id="fnref\d*:\w+"><a class="footnote-ref" href="#fn:\w+">(\d+)</a></sup>',
+        r'<sup class="footnote-ref">\1</sup>',
+        html,
+    )
+    # 文末列表项：<li id="fn:1"> → <li>
+    html = re.sub(r'<li id="fn:\w+">', '<li>', html)
+    # 跳回箭头：<a class="footnote-backref" ...>↩</a>——同一条脚注被多次引用时会连续重复几个，
+    # 只有第一个前面带 &#160; 分隔符，后面几个是直接紧贴的，要能都删掉
+    html = re.sub(r'<a class="footnote-backref"[^>]*>(?:&#8617;|↩)</a>', '', html)
+    html = re.sub(r'&#160;(?=</p>)', '', html)  # 删完箭头后清理落单的分隔符
+    return html
+
+
 def md_to_html(md_text: str) -> str:
     body_html = markdown.markdown(
         md_text,
         extensions=["tables", "fenced_code", "footnotes"],
     )
+    body_html = _strip_footnote_anchors(body_html)
     full_html = f"<html><head>{WECHAT_CSS}</head><body>{body_html}</body></html>"
     inliner = css_inline.CSSInliner()
     inlined = inliner.inline(full_html)
