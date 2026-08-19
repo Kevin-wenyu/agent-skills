@@ -8,3 +8,8 @@ publishing-pipeline/wechat.yaml
 publishing-pipeline/stats.json
 publishing-pipeline/_output/
 publishing-pipeline/.venv/
+
+# same rule for the shareable package's copy of the publish scripts
+kevin-wechat-skill/skills/publish/scripts/wechat.yaml
+kevin-wechat-skill/**/stats.json
+kevin-wechat-skill/**/*_qa.png
