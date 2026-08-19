@@ -211,7 +211,7 @@ Kevin 实际用过的 4 种钩子，参考但不限定：
 cd /Users/kevin/Documents/Kevin-Brain/raw/publishing-pipeline
 .venv/bin/python check.py "articles/路径/文章.md"
 ```
-0 error 才发。
+0 error 才发。**"小节内没有找到链接"这条警告，原创文章会必然触发，是预期内的误报**——这条检查（`check_section_links`）找的是行内 `[文字](链接)` 或裸 URL，专门防 `newsletter-digest` 那种编译文章的链接堆文末塌陷，认不出 write-article 用的脚注 `[^N]` 格式。原创文章看到这条警告不用纠结，跟其他真实警告/错误区分开看。
 
 **发**
 ```bash
