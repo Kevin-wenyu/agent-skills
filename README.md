@@ -18,18 +18,13 @@ agent-skills/
 │   ├── write-article/
 │   ├── newsletter-digest/
 │   └── architecture-diagram/
-├── kevin-wechat-skill/         # 上面公众号相关几个 skill 泛化打包后的可分发版本
-└── publishing-pipeline/        # write-article / newsletter-digest 共用的发布脚本（check.py / publish.py 等）
+├── kevin-wechat-skill/         # 公众号几个 skill 泛化打包后的可分发版本，这个仓库自己拥有、自己改
+└── publishing-pipeline/        # write-article / newsletter-digest 共用的发布脚本（check.py / publish.py 等），跟着 write-article 一起从源头同步
 ```
 
 设计原则和分类法参考了花叔的《Agent Skills 使用手册》（未收录进本仓库——第三方版权内容，不适合放公开仓库）。
 
-## 两类 skill：自己写的 vs 镜像的
-
-仓库里的 skill 分两种，命名和维护方式不一样：
-
-- **自研（`kevin-` 前缀）**：从零设计的，比如 `kevin-book-research-planning`、`kevin-wechat-topic-gen`。同一条流水线的 skill 再共享一个二级前缀（`kevin-book-*`、`kevin-wechat-*`），方便在 `skills/` 平铺目录里一眼认出属于哪条流水线。
-- **镜像（保留原名）**：`write-article`、`newsletter-digest` 等是从 `~/.claude/skills/` 同步过来的、已经在实际生产使用的真实 skill。放进这个仓库只是为了拿到 git 版本历史（`~/.claude/skills` 本身不带版本控制），不是在这里重新设计它们——改动应该先发生在源头，再手动同步过来。
+这里的每个 skill 都是我自己在维护的东西，没有"自己的"和"别人的"之分——区别只在于**在哪改**：大部分直接在这个仓库里改；少数几个（`write-article`、`newsletter-digest`）我在别的地方（`~/.claude/skills/`）天天用，那边是权威版本，改动要先发生在那边，再同步过来这个仓库存版本历史，不能反过来在这个仓库里单方面改，改了也不会生效。命名上能看出这个区别：自己在这个仓库里从零写的都带 `kevin-` 前缀（`kevin-book-research-planning`、`kevin-wechat-*`），同一条流水线的再共享二级前缀方便扫一眼归类；跟着源头同步过来的保留原名，不额外加前缀，好让人一眼认出该去哪改。
 
 ## 设计原则
 
@@ -45,15 +40,15 @@ agent-skills/
 
 ## 当前 skill 索引
 
-| Skill | 所属流水线 | 类型 | 状态 |
+| Skill | 干什么用的 | 状态 | 改哪里 |
 |---|---|---|---|
-| `kevin-book-research-planning` | 写书 | 自研 | 已建，未验证，未注册为可调用 skill |
-| `kevin-wechat-topic-gen` | 公众号 | 自研 | 已建，未验证 |
-| `kevin-wechat-research` | 公众号 | 自研 | 已建，未验证 |
-| `kevin-wechat-proofreading` | 公众号 | 自研 | 已建，未验证 |
-| `write-article` | 公众号 | 镜像 | **生产在用** |
-| `newsletter-digest` | 公众号 | 镜像 | **生产在用** |
-| `architecture-diagram` | 公众号（配图） | 镜像，完整（第三方，Cocoon AI） | 生产在用 |
+| `kevin-book-research-planning` | 写书流水线第1阶段：把模糊的书想法整理成确认过的章节结构 + 逐章调研笔记 | 已建，未验证，未注册为可调用 skill | 这个仓库里直接改 |
+| `kevin-wechat-topic-gen` | 公众号选题生成：给一个话题，产出3-4个真正有差异的方向，带优劣分析，交用户选 | 已建，未验证 | 这个仓库里直接改 |
+| `kevin-wechat-research` | 公众号深度调研：选题定了之后按信息源优先级搜索，边搜边存，产出结构化简报 | 已建，未验证 | 这个仓库里直接改 |
+| `kevin-wechat-proofreading` | 初稿写完后的AI味+细节审校，不查事实（write-article已管），独立子agent跑 | 已建，未验证 | 这个仓库里直接改 |
+| `write-article` | Kevin原创文章写作：声音规则 + 3种结构分支 + 发布前检查清单 | **生产在用** | 源头 `~/.claude/skills/write-article` 改，改完手动同步过来 |
+| `newsletter-digest` | 编译/汇总类文章（技术周刊、链接合集）处理，独立子agent核实取代同模型自查 | **生产在用** | 同上，源头改 |
+| `architecture-diagram` | 复杂系统架构图，暗色风格 HTML+SVG | 生产在用，第三方（Cocoon AI） | 不改，`npx skills add` 装最新版 |
 
 `write-article` 默认还会用到两个配图 skill——`fireworks-tech-graph`、`excalidraw-diagram-generator`。这两个本身是通过 `npx skills add` 从外部仓库安装的第三方包（脚本和参考资料在安装时动态拉取，源头本地也不存在完整文件），不适合在这个仓库里放"半个镜像"，所以不 vendor，需要时自己装：
 
@@ -87,11 +82,11 @@ npx skills add yizhiyanhua-ai/fireworks-tech-graph
 - [ ] 验证跨工具安装（Codex / Gemini CLI，不只 Claude）
 - [ ] 决定独立开仓库还是留在这个仓库下，然后正式发布
 
-## 怎么加一个新 skill
+## 怎么改一个 skill
 
-用 `skill-creator` skill 起草，别手写——它定义好了 SKILL.md 结构、eval/test 流程、description 优化方法。新 skill 放在 `skills/<name>/`，kebab-case，跟 frontmatter 里的 `name` 对齐。自研的一律 `kevin-` 前缀；同一条流水线的再共享二级前缀。SKILL.md 控制在 500 行以内，大参考材料放 `references/`，可执行脚本放 `scripts/`。
+**新建**：用 `skill-creator` skill 起草，别手写——它定义好了 SKILL.md 结构、eval/test 流程、description 优化方法。新 skill 放在 `skills/<name>/`，kebab-case，跟 frontmatter 里的 `name` 对齐。自己在这个仓库里从零写的一律 `kevin-` 前缀；同一条流水线的再共享二级前缀。SKILL.md 控制在 500 行以内，大参考材料放 `references/`，可执行脚本放 `scripts/`。
 
-镜像 skill 走另一条路：源头（`~/.claude/skills/<name>`）改完之后，手动 `cp -r` 过来再提交，没有自动检测漂移的机制，靠人工重新对比。
+**改一个跟着源头同步的 skill**（`write-article`、`newsletter-digest`）：先去源头（`~/.claude/skills/<name>`）改，改完手动 `cp -r` 过来这个仓库再提交。不能反过来在这个仓库里单方面改——那边才是天天在用的权威版本，这边的副本改了不会生效，还会造成两边不一致。没有自动检测漂移的机制，靠人工重新对比。
 
 ## License
 
