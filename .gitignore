@@ -1,3 +1,10 @@
 .serena/
 .claude/
 .DS_Store
+
+# real WeChat API credentials — never commit, only wechat.yaml.example is tracked
+publishing-pipeline/wechat.yaml
+# generated/local artifacts from the real pipeline, not source
+publishing-pipeline/stats.json
+publishing-pipeline/_output/
+publishing-pipeline/.venv/
