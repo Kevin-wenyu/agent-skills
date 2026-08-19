@@ -1,105 +1,40 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working in this repository.
 
-## Project purpose
+For what this repo is, its layout, the current skill index, and pipeline progress, see [README.md](README.md) — don't duplicate that here; keep this file to conventions and constraints for actually doing the work.
 
-This repository's goal is to create Claude Skills for ongoing/long-term use (per the user: "创建使用的skill，长期维护" — create skills for actual use, maintained long-term). It is a skills workspace: every skill lives under `skills/<name>/` following the standard Skill anatomy (`SKILL.md` + optional `scripts/`, `references/`, `assets/`), built and iterated using the `skill-creator` skill's draft → test → review → improve loop. Directory layout follows the reference project [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills): all skills nested one level under `skills/`, flat (no category subfolders — categorize via the index table below and via naming prefix), with repo-level material (this file, the design-principles PDF) staying at the root instead of mixed in with skill directories.
+## Directory conventions
 
-Current contents:
+- Every skill lives at `skills/<name>/` (kebab-case, matching the `name` in its `SKILL.md` frontmatter), following the standard anatomy: `SKILL.md` + optional `scripts/`, `references/`, `assets/`. Never create a skill directory at the repo root.
+- Keep `SKILL.md` under ~500 lines (roughly 3000 Chinese characters). Past that, split into two skills — long SKILL.md files measurably hurt execution accuracy. Push large reference material into `references/`, executable helpers into `scripts/`.
+- **Self-authored skills** get a `kevin-` prefix (e.g. `kevin-book-research-planning`), so they're recognizable at a glance against mirrored/third-party skills. Skills belonging to the same pipeline additionally share a secondary prefix so they sort together in the flat `skills/` folder: `kevin-book-*`, `kevin-wechat-*`. A new, unrelated project gets its own secondary prefix the same way rather than overloading an existing one.
+- **Mirrored skills keep their real name, no `kevin-` prefix** — `write-article/`, `newsletter-digest/`, `architecture-diagram/` must match their canonical directory name exactly, or the mental link back to the real copy breaks.
+- **Don't vendor a third-party skill that depends on files fetched at install time** (scripts/references pulled dynamically via `npx skills add`, not present even at the canonical source). Reference it as an external dependency instead — see how `kevin-wechat-skill/README.md` handles `fireworks-tech-graph` / `excalidraw-diagram-generator`. Only mirror a skill if what's at the source is actually complete.
 
-- `Agent-Skills-Complete-Guide-zh-v260411.pdf` — a Chinese-language reference guide on Agent Skills (花叔's 橙皮书). Source of the 5 design principles below and of a 6-pattern taxonomy (检查清单型/Checklist, 多方案选择型/Options, 多阶段流水线型/Pipeline, 外部API集成型/Integration, 多Agent协作型/Swarm, 思维蒸馏型/Distillation) used to classify new skills before drafting them.
-- `skills/kevin-book-research-planning/` — first skill. Stage 1 of a planned 5-stage book-writing pipeline (Pipeline pattern): 调研与规划 → 内容写作 → 构建与组装 → 版本管理 → 多格式输出. Turns a book idea into a confirmed `PROJECT.md` (chapter structure, status per chapter) plus per-chapter research notes under `research/`, ready for a future "内容写作" skill to consume. Only stage 1 has been built so far — build order is deliberately one-at-a-time: use each stage in anger before designing the next, rather than scaffolding all 5 up front.
-- `skills/kevin-wechat-topic-gen/`, `skills/kevin-wechat-research/` — the two upstream stages of a WeChat-article workflow that are genuinely missing from the user's real system (see `write-article/` below): 选题生成 (Options pattern) and 深度调研 (save-as-you-go). Their output (a chosen topic direction, a research brief) is meant to feed into `write-article`, which takes over from drafting onward. Not yet validated against a real article.
-- `skills/write-article/` — **mirrored copy of the user's real, already-in-production article-writing skill**, whose canonical home is `~/.claude/skills/write-article` (a protected path this repo/session cannot mount directly — see "Working here" for the sync process). This is not something authored in this repo; it's git-tracked here so the user gets version history that `~/.claude/skills` itself doesn't have. Defines Kevin's actual voice rules, 3 article-structure branches, hook patterns, fact-checking hard-line, and a real publish pipeline (`check.py`/`publish.py`, mirrored into `publishing-pipeline/` below).
-- `skills/newsletter-digest/` — mirrored. Handles compiled/digest articles (tech newsletters, link roundups) — explicitly **out of scope** for `write-article`, which only covers Kevin's original writing. 5-stage internal pipeline (extract → independent-subagent fact-recheck → fixed layout → diagrams → automated check.py retry loop). The independent-subagent recheck step is a strong real-world example of the "amplify don't replace" + verification principles: it exists because same-model self-review was proven (PG Weekly #656) to miss real errors that a fresh, source-blind subagent catches. Also depends on `publishing-pipeline/check.py`.
-- `skills/fireworks-tech-graph/` — mirrored, **incomplete**: only `SKILL.md` copied, the `scripts/` and `references/style-N.md` files it references weren't present at `~/.claude/skills/fireworks-tech-graph` (likely resolved via its own `npx skills add` install path rather than vendored locally). Default diagram tool referenced by `write-article`. Notably has an explicit 反合理化 (anti-rationalization) table at the top — "语法验证通过就行" → 反驳: 语法正确≠逻辑正确, etc. — worth reusing as a pattern in future self-authored skills.
-- `skills/architecture-diagram/` — mirrored, complete (`resources/template.html` included). Dark-themed HTML+SVG architecture diagrams, used for more complex system/infra diagrams than `fireworks-tech-graph`'s default style handles.
-- `skills/excalidraw-diagram-generator/` — mirrored, **incomplete**: only `SKILL.md` copied, the `references/`, `templates/`, and `scripts/` it references weren't present in the source either. Generates `.excalidraw` JSON files for hand-drawn-style diagrams.
-- `publishing-pipeline/` — **mirrored, at repo root, not under `skills/`** — because it's shared executable infrastructure both `write-article` and `newsletter-digest` depend on, not a skill itself. Canonical home is `~/Documents/Kevin-Brain/raw/publishing-pipeline` (a different vault, outside `~/.claude/skills`, mountable directly — not protected like the skills path). Contains: `check.py` (pre-publish validation — SVG refs/dimensions, SQL block syntax, episode-reference, digest frontmatter, section-link checks), `publish.py`/`publish_html.py` (push a draft to the WeChat API), `qa_svg.py`, `make_cover.py`, `stats.py`, plus `vault-specs.md` and `fact-checking.md` reference docs. **Deliberately excluded from the mirror:** `wechat.yaml` (contains the real WeChat app_id/app_secret in plaintext — copying it into a repo named `.../GitHub/...` would leak credentials into git history; `wechat.yaml.example` is tracked instead, `wechat.yaml` is gitignored), `stats.json` (generated local data), `_output/` (generated artifacts), `.venv/` (a full Python virtualenv, hundreds of vendored files — reproducible via `pip install`, never vendor a venv into git). Read-only mirror for version history, same as the `skills/` mirrors above — the scripts still actually run from `~/Documents/Kevin-Brain/raw/publishing-pipeline` (hardcoded relative paths to that vault's `articles/`, `assets/`, and its own `.venv`), copying them here does not make them independently runnable from this repo.
-- `kevin-wechat-skill/` — **the shareable package, at repo root, separate from `skills/`.** This is the answer to "I need one formal `kevin-wechat-skill` directory with scripts, references, and every sub-skill inside it, that I can eventually share on GitHub for other people (and other tools — Codex, Gemini, not just Claude) to install." It is a *derived* artifact: built by genericizing and consolidating the personal mirrors above (`write-article`, `newsletter-digest`, the two `kevin-wechat-*` self-authored skills, `publishing-pipeline/`) — it does not replace them, and the personal mirrors keep being the ones actually in production for Kevin day-to-day. Structure: `README.md` (install via `npx skills add`, lists the 3 diagram skills as external peer-dependencies rather than vendoring them) + `skills/topic-gen`, `skills/research`, `skills/write-article`, `skills/newsletter-digest`, `skills/publish` (new — didn't exist before; consolidates `check.py`/`publish.py`/`publish_html.py`/`qa_svg.py`/`make_cover.py`/`stats.py` plus `references/fact-checking.md` and `references/vault-specs.md`, since shared scripts need to live inside one specific skill under the Skills spec, not a loose top-level folder). Genericization approach ("做法二"): kept real worked examples (Kevin's actual voice rules, article-structure branches, hook patterns) rather than stripping to an abstract template — concrete examples are what makes a skill actually get followed — but added explicit "首次使用前必做/换成你自己的" callouts at every point that's Kevin-specific, and removed hardcoded personal paths, `EPISODE_MAP` course content, and the personal `resource-index.md` (judged out of scope — a PostgreSQL course reading list, unrelated to WeChat publishing mechanics). Real WeChat credentials are excluded the same way as `publishing-pipeline/`: `wechat.yaml.example` tracked, `wechat.yaml` gitignored. Status: built, not yet tested end-to-end, not yet published to its own GitHub repo (see "Pipeline progress" below).
-- `.serena/` — Serena MCP project configuration (gitignored).
-- `.claude/` — Claude Code local settings (gitignored).
+## Syncing a mirrored skill
 
-**Retired:** `kevin-wechat-proofreading`, `kevin-wechat-image`, `kevin-wechat-publish-check` were scaffolded early in this repo's life as a generic, from-scratch WeChat pipeline, before discovering that `write-article` already covers the same ground far more specifically (real voice rules instead of generic AI-tone checklist; local SVG + `rsvg-convert` instead of generic image-API-and-host; a real Python check/publish pipeline instead of a generic checklist). Removed via `git rm` rather than left to rot as a parallel, conflicting system — still recoverable from git history (see the "Retire generic proofreading/image/publish-check skills..." commit) if ever needed.
+Canonical homes: `~/.claude/skills/<name>` for skills, `~/Documents/Kevin-Brain/raw/publishing-pipeline` for the shared publish scripts. Both are readable directly from this environment — confirm with `ls`/`Read` before assuming a mirror is stale or incomplete. To update a mirror, diff the two copies manually and re-copy changed files; there's no automated drift detection, and the scripts in `publishing-pipeline/` still only actually run from the canonical vault (hardcoded relative paths to its `articles/`, `assets/`, `.venv`) — the copy here is for version history, not independent execution.
 
-### Skills index (quick scan)
+When mirroring, deliberately exclude: real credentials (`wechat.yaml` — only `wechat.yaml.example` is tracked, real file is gitignored), generated/local artifacts (`stats.json`, `_output/`, `.venv/`), and content that's personal-but-unrelated to the skill's actual purpose (e.g. a PostgreSQL-course reading list found inside `publishing-pipeline/` — out of scope for publish mechanics, removed).
 
-| Skill | Category | Type | Status |
-|---|---|---|---|
-| `kevin-book-research-planning` | Book pipeline | self-authored | built, unvalidated |
-| `kevin-wechat-topic-gen` | WeChat pipeline | self-authored | built, unvalidated |
-| `kevin-wechat-research` | WeChat pipeline | self-authored | built, unvalidated |
-| `write-article` | WeChat pipeline | mirrored | real, in production |
-| `newsletter-digest` | WeChat pipeline | mirrored | real, in production |
-| `fireworks-tech-graph` | WeChat pipeline (diagrams) | mirrored, incomplete | real, in production |
-| `architecture-diagram` | WeChat pipeline (diagrams) | mirrored, complete | real, in production |
-| `excalidraw-diagram-generator` | WeChat pipeline (diagrams) | mirrored, incomplete | real, in production |
+## Design principles
 
-All paths are `skills/<name>/`.
+Every self-authored skill should hold to these 5 (source: an external Chinese-language Agent Skills guide — not vendored in this repo, third-party copyrighted content):
 
-### Pipeline progress (which project each skill belongs to, and what's left)
+1. **先确认再动手 (confirm before acting)** — for anything with real decision or redo cost, present options and get sign-off before the expensive step. Don't let a skill pick a direction and run pages deep before the user can object.
+2. **边做边存 (save as you go)** — long-running skills (research, multi-step generation) write results to disk incrementally per stage, not all at once at the end. Sessions get cut off; incremental saves mean nothing is lost.
+3. **模块化可组合 (modular and composable)** — one skill does one thing. Don't bundle a whole pipeline into one SKILL.md; split into small skills that chain Unix-pipe style.
+4. **给选择不给答案 (offer choices, not answers)** — present ~3 options rather than one finished answer, so the output carries the user's judgment, not just the AI's. This is also the main lever against generic "AI-flavored" output.
+5. **放大你，而不是替代你 (amplify, don't replace)** — flag issues / propose edits, let the user decide. Shape is input → proposal → human decision → execution → human confirmation, not input → output with no human in the loop.
 
-This is the answer to "I only built the WeChat side, how do I pick book-writing back up later": the `kevin-book-*` / `kevin-wechat-*` prefix already groups each pipeline's skills so they sort together inside the flat `skills/` folder, and this checklist tracks completion per pipeline. Resuming a pipeline later means adding the next unchecked skill below with the same prefix — nothing about the directory layout changes.
+Self-authored skills should also hold to the concreteness bar the mirrored production skills demonstrate: real positive **and** negative examples (not abstract templates), hard constraints stated as rules rather than preferences, and anti-rationalization tables that name a specific shortcut and rebut it (e.g. `write-article`'s voice rules, `fireworks-tech-graph`'s 反合理化 table).
 
-**Book-writing pipeline** — 1/5 stages built, self-authored, unvalidated:
-- [x] 调研与规划 — `kevin-book-research-planning`
-- [ ] 内容写作
-- [ ] 构建与组装
-- [ ] 版本管理
-- [ ] 多格式输出
+## Building a new skill
 
-**WeChat-article pipeline** — upstream done, downstream is the real production system, not something to (re-)build:
-- [x] 选题生成 — `kevin-wechat-topic-gen` (self-authored, unvalidated)
-- [x] 深度调研 — `kevin-wechat-research` (self-authored, unvalidated)
-- [x] 写作 → 审校 → 配图 → 发布 — covered by `write-article`, `newsletter-digest`, `fireworks-tech-graph`, `architecture-diagram`, `excalidraw-diagram-generator` (all mirrored from `~/.claude/skills`, already in production — do not scaffold new skills for these stages)
+Use the `skill-creator` skill rather than authoring freehand — it defines the SKILL.md structure, eval/test workflow, and description-optimization process this project follows. Apply the 5 principles above while drafting. If `skill-creator` is genuinely unavailable, draft freehand against the same anatomy (frontmatter with `name`/`description`, numbered steps, explicit boundaries section) and principles instead of skipping structure.
 
-**WeChat pipeline, packaged for sharing** — separate track, not a pipeline stage: consolidate the above into one installable, genericized package and (if it tests well) publish it.
-- [x] Build `kevin-wechat-skill/` — genericized `topic-gen`/`research`/`write-article`/`newsletter-digest` + new `publish` sub-skill
-- [ ] Test the full chain for real (topic-gen → research → write-article → publish) — user said "先测试，如果好肯定就发布"
-- [ ] Test cross-tool install (Codex/Gemini CLI, not just Claude) via `npx skills add`
-- [ ] Decide whether it needs its own standalone GitHub repo vs. staying a subdirectory of this repo, then publish
+## Open follow-ups
 
-**Other projects** — none started yet. See "Future scope" below for the naming convention to use when one starts.
-
-### Open items (handoff notes)
-
-Carried over from the Cowork session that built `kevin-wechat-skill/` — flagging so they aren't lost now that maintenance moves to Claude Code:
-
-- **Judgment calls made while genericizing `kevin-wechat-skill/`, not yet reviewed by the user:** excluded `resource-index.md` from `publish/references/` (judged as personal PostgreSQL-course content, out of scope for WeChat publishing mechanics); did not vendor the 3 diagram skills (`fireworks-tech-graph`, `architecture-diagram`, `excalidraw-diagram-generator`) into the package, listing them as external `npx skills add` peer-dependencies in the README instead; consolidated all shared scripts into a new `publish` sub-skill that didn't exist in the original system; softened `newsletter-digest`'s specific incident citations (PG Weekly #656/#660) into more general language when explaining the independent-subagent fact-recheck step; wrote the "首次使用前必做" callouts in `write-article`/`publish` from scratch — worth a skim to confirm nothing Kevin-specific leaked through and nothing important got over-genericized.
-- **`kevin-book-research-planning` was never registered as an invokable skill** (via `save_skill` or equivalent) after being drafted — still just a file on disk, unconfirmed whether the user wants it wired up for actual use yet.
-- Next steps for `kevin-wechat-skill/` are tracked above in "WeChat pipeline, packaged for sharing" — testing the chain end-to-end and cross-tool install are the two blockers before anything gets published to GitHub.
-
-### Future scope
-
-The user has more projects beyond book-writing and WeChat that will eventually need skills or plugins here — this repo isn't scoped to just these two pipelines long-term. When a new unrelated project starts, give it its own secondary prefix the same way (`kevin-<project>-*`) rather than overloading `kevin-book-*` or `kevin-wechat-*`.
-
-**Why this repo restarted from scratch on skills instead of reusing whatever existed before:** per the user, past attempts had two failure modes — the AI didn't reliably follow the skill (compliance), and even when followed, output quality was poor. The mirrored real skills above (especially `write-article`'s hard constraints/反例/anchor-articles and `fireworks-tech-graph`'s 反合理化 table) are evidence of what actually works: concrete positive AND negative examples, hard constraints stated as rules not preferences, and anti-rationalization tables that name the specific shortcut and rebut it — not generic "write good content" advice. Self-authored skills in this repo should hold to that same concreteness bar, not just the lighter anatomy used so far.
-
-Git was initialized once the first skill landed (see "Working here" below); history starts from the `book-research-planning` commit.
-
-**Note on tooling:** the `skill-creator` skill referenced below is a Claude Code concept and was not available as an invocable tool when `book-research-planning` was authored (in a Cowork session). It was drafted directly against the anatomy and 5 principles from the guide instead. If `skill-creator` becomes available in a given session, prefer it per the instruction below; otherwise draft freehand but hold to the same structure (frontmatter with `name`/`description`, numbered steps, explicit boundaries section) and principles.
-
-## Design principles (from `Agent-Skills-Complete-Guide-zh-v260411.pdf`)
-
-Every skill authored in this repo should follow these 5 principles (source: guide's "5个设计原则" section):
-
-1. **Confirm before acting (先确认再动手)** — For anything with real decisions or cost to redo, have the skill present options and get user sign-off before doing the expensive step. Don't let it pick a direction and run 2000 words deep before the user can object — that work is wasted and pollutes context once it's wrong.
-2. **Save as you go (边做边存)** — In long-running skills (research, multi-step generation), write results to disk incrementally as each stage/batch completes, not all at once at the end. Sessions can be cut off (network, token limits, closed tab); incremental saves mean nothing is lost.
-3. **Modular and composable (模块化可组合)** — One skill does one thing. Don't bundle a whole pipeline (e.g. "topic selection + research + draft + review + images") into a single SKILL.md — it bloats context and kills flexibility. Split into small skills that can be run independently or chained, Unix-pipe style.
-4. **Offer choices, not answers (给选择不给答案)** — Prefer presenting ~3 options over handing back one finished answer. This keeps the user making the real decisions, so the output carries their judgment, not just the AI's — and it's also the main lever for avoiding generic "AI-flavored" output. The skill is an advisor, not the decision-maker.
-5. **Amplify, don't replace (放大你，而不是替代你)** — A skill should flag issues / propose edits and let the user decide what to accept, rather than auto-applying changes. The shape is input → proposal → human decision → execution → human confirmation, not input → output with no human in the loop. That's what distinguishes a skill from a plain automation script.
-
-**Maintenance guidance from the same guide:**
-- Skills evolve with use — expect to revise a skill's steps/checklist many times after real usage surfaces gaps. Track skill changes with git so you can see how a skill matured and roll back a version that regresses.
-- If a skill's SKILL.md grows past ~3000 Chinese characters (roughly analogous to the ~500-line guidance below), split it into two — long skills measurably hurt the AI's execution accuracy. Short and focused beats long and comprehensive.
-
-## Working here
-
-- When asked to build a new skill, use the `skill-creator` skill rather than freehand authoring — it defines the SKILL.md structure, eval/test workflow, and description-optimization process this project should follow, and apply the 5 principles above while drafting.
-- Each skill gets its own directory under `skills/` (kebab-case, matching its `name` in SKILL.md frontmatter) — e.g. `skills/kevin-book-research-planning/SKILL.md`. Don't create skill directories at the repo root; that was the layout before this repo adopted the addyosmani/agent-skills convention, and any repo-root skill folder found from before that point should be moved under `skills/` rather than left where it was. Keep SKILL.md under ~500 lines; push large reference material into `references/` and executable helpers into `scripts/`.
-- **Naming convention:** this only applies to skills *authored in this repo*. Every self-authored skill is prefixed `kevin-` (e.g. `kevin-book-research-planning`), matching the guide's own advice to give personally-authored skills a consistent personal prefix (花叔 uses `huashu-`) — this makes them recognizable at a glance and distinct from official/third-party skills (`docx`, `pdf`, `pptx`, etc.) once the skill list grows. Skills belonging to the same pipeline additionally share a secondary prefix so that pipeline's stages sort and scan together, independent of unrelated pipelines: `kevin-book-*` for the book-writing pipeline, `kevin-wechat-*` for the WeChat-article pipeline (currently just `kevin-wechat-topic-gen` and `kevin-wechat-research` — see "Retired" above for why it's not the full 5 stages).
-- **Mirrored skills keep their real name, no `kevin-` prefix.** `write-article/` (and any future mirror of a skill living in `~/.claude/skills/`) must match its directory name exactly — renaming the mirror would break the mental link back to the canonical copy the user actually invokes day to day. Don't "clean up" a mirrored skill's name to fit the convention above.
-- **Syncing a mirrored skill:** `~/.claude/skills/` is a protected host path — no tool in a Cowork session can mount or read it directly, permission dialogs don't apply, this is a hard block. To bring a real skill under version control here, ask the user to run `cp -r ~/.claude/skills/<name> ~/Documents/GitHub/skills_creator_project/skills/<name>` themselves (note the `skills/` in the destination), then read/commit it from this side. There's no automated way to detect drift between the mirror and the canonical copy — re-copy and diff manually when the user has edited the real one.
-- Put this repo under git once the first skill is added, and commit as skills iterate — the guide's maintenance advice above depends on having history to look back through.
-- Once the first skill(s) land, update this CLAUDE.md with the actual directory layout and any repo-wide conventions that emerge (e.g., shared script libraries, a common test/eval runner) — don't leave this section describing an empty repo once it isn't one.
+- `kevin-wechat-skill/`'s genericization judgment calls haven't been reviewed by the user yet: didn't vendor the 3 diagram skills as peer-dependencies instead, consolidated shared scripts into a new `publish` sub-skill that didn't exist in the original system, softened `newsletter-digest`'s specific incident citations into general language, wrote the "首次使用前必做" callouts from scratch. Worth a skim to confirm nothing Kevin-specific leaked through and nothing important got over-genericized.
+- `kevin-book-research-planning` has never been registered as an invokable skill after being drafted — still just a file on disk.

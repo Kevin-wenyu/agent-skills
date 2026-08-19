@@ -16,13 +16,12 @@ agent-skills/
 │   ├── kevin-wechat-research/
 │   ├── write-article/
 │   ├── newsletter-digest/
-│   ├── fireworks-tech-graph/
-│   ├── architecture-diagram/
-│   └── excalidraw-diagram-generator/
+│   └── architecture-diagram/
 ├── kevin-wechat-skill/         # 上面公众号相关几个 skill 泛化打包后的可分发版本
-├── publishing-pipeline/        # write-article / newsletter-digest 共用的发布脚本（check.py / publish.py 等）
-└── Agent-Skills-Complete-Guide-zh-v260411.pdf   # 设计原则和分类法的来源
+└── publishing-pipeline/        # write-article / newsletter-digest 共用的发布脚本（check.py / publish.py 等）
 ```
+
+设计原则和分类法参考了花叔的《Agent Skills 使用手册》（未收录进本仓库——第三方版权内容，不适合放公开仓库）。
 
 ## 两类 skill：自己写的 vs 镜像的
 
@@ -33,7 +32,7 @@ agent-skills/
 
 ## 设计原则
 
-出自 `Agent-Skills-Complete-Guide-zh-v260411.pdf`，每个自研 skill 都要过一遍这五条：
+每个自研 skill 都要过一遍这五条：
 
 1. **先确认再动手**——有真实决策成本的地方，让 skill 先给方案、等用户拍板，别自己埋头跑出两千字才发现方向错了。
 2. **边做边存**——长流程（调研、多步生成）每完成一个阶段就落盘，别攒到最后一次性写，防止中途断掉丢东西。
@@ -52,9 +51,14 @@ agent-skills/
 | `kevin-wechat-research` | 公众号 | 自研 | 已建，未验证 |
 | `write-article` | 公众号 | 镜像 | **生产在用** |
 | `newsletter-digest` | 公众号 | 镜像 | **生产在用** |
-| `fireworks-tech-graph` | 公众号（配图） | 镜像，不完整 | 生产在用（`scripts/`、`references/` 未同步） |
-| `architecture-diagram` | 公众号（配图） | 镜像，完整 | 生产在用 |
-| `excalidraw-diagram-generator` | 公众号（配图） | 镜像，不完整 | 生产在用（`references/`、`templates/`、`scripts/` 未同步） |
+| `architecture-diagram` | 公众号（配图） | 镜像，完整（第三方，Cocoon AI） | 生产在用 |
+
+`write-article` 默认还会用到两个配图 skill——`fireworks-tech-graph`、`excalidraw-diagram-generator`。这两个本身是通过 `npx skills add` 从外部仓库安装的第三方包（脚本和参考资料在安装时动态拉取，源头本地也不存在完整文件），不适合在这个仓库里放"半个镜像"，所以不 vendor，需要时自己装：
+
+```bash
+npx skills add yizhiyanhua-ai/fireworks-tech-graph
+# excalidraw-diagram-generator 按你实际用的安装源装
+```
 
 ## 流水线进度
 
