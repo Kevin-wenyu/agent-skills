@@ -124,7 +124,14 @@ Kevin 实际用过的 4 种钩子，参考但不限定：
 
 ## 图
 
-**默认 `fireworks-tech-graph` Style 6（Claude Official，暖米白 `#f8f6f3`）**。
+**封面是硬需求，跟正文配图是两回事，别漏。** `publish.py` 会把文章里**第一张 SVG**转 PNG 当作微信封面（`thumb_media_id`）上传，**这张图不会显示在正文里**。如果不专门做封面、只顾着画正文概念图，第一张正文图会被当成封面抽走，正文反而变成没有图——这个坑第一次实跑时踩过。所以顺序上封面必须排最前面（H1 标题之后），正文配图排在它后面。
+
+封面用 `publishing-pipeline/make_cover.py`（不是 `fireworks-tech-graph`），这是仓库里已经在用的封面生成器，"B风格：左色块+右标题"，按分类配色（`pg`/`mysql`/`ai`/`dba`/`ops`/`xinchuang`等）：
+```bash
+python3 make_cover.py "文章标题" 输出路径.svg --sub "副标题" --cat 分类 --tags "标签1,标签2,标签3"
+```
+
+**默认 `fireworks-tech-graph` Style 6（Claude Official，暖米白 `#f8f6f3`）用于正文配图**（架构、流程、数据表、对比、概念图），跟封面是两套工具，不要混用。
 
 什么 skill 什么时候用，由 Claude 按内容判断：
 
@@ -201,6 +208,7 @@ Kevin 实际用过的 4 种钩子，参考但不限定：
 - GitHub 项目类：仓库链接在脚注里有
 
 **图**
+- 第一张 SVG 是专门做的封面（`make_cover.py` 生成），不是随手拿正文第一张图顶替
 - 所有图 SVG 格式，在 `raw/assets/svg/`
 - 没 Mermaid
 - 每张过 `rsvg-convert` 无错
