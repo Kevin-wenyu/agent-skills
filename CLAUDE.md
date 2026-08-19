@@ -62,6 +62,14 @@ This is the answer to "I only built the WeChat side, how do I pick book-writing 
 
 **Other projects** — none started yet. See "Future scope" below for the naming convention to use when one starts.
 
+### Open items (handoff notes)
+
+Carried over from the Cowork session that built `kevin-wechat-skill/` — flagging so they aren't lost now that maintenance moves to Claude Code:
+
+- **Judgment calls made while genericizing `kevin-wechat-skill/`, not yet reviewed by the user:** excluded `resource-index.md` from `publish/references/` (judged as personal PostgreSQL-course content, out of scope for WeChat publishing mechanics); did not vendor the 3 diagram skills (`fireworks-tech-graph`, `architecture-diagram`, `excalidraw-diagram-generator`) into the package, listing them as external `npx skills add` peer-dependencies in the README instead; consolidated all shared scripts into a new `publish` sub-skill that didn't exist in the original system; softened `newsletter-digest`'s specific incident citations (PG Weekly #656/#660) into more general language when explaining the independent-subagent fact-recheck step; wrote the "首次使用前必做" callouts in `write-article`/`publish` from scratch — worth a skim to confirm nothing Kevin-specific leaked through and nothing important got over-genericized.
+- **`kevin-book-research-planning` was never registered as an invokable skill** (via `save_skill` or equivalent) after being drafted — still just a file on disk, unconfirmed whether the user wants it wired up for actual use yet.
+- Next steps for `kevin-wechat-skill/` are tracked above in "WeChat pipeline, packaged for sharing" — testing the chain end-to-end and cross-tool install are the two blockers before anything gets published to GitHub.
+
 ### Future scope
 
 The user has more projects beyond book-writing and WeChat that will eventually need skills or plugins here — this repo isn't scoped to just these two pipelines long-term. When a new unrelated project starts, give it its own secondary prefix the same way (`kevin-<project>-*`) rather than overloading `kevin-book-*` or `kevin-wechat-*`.
