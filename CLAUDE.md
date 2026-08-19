@@ -12,6 +12,10 @@ For what this repo is, its layout, the current skill index, and pipeline progres
 - **Mirrored skills keep their real name, no `kevin-` prefix** — `write-article/`, `newsletter-digest/`, `architecture-diagram/` must match their canonical directory name exactly, or the mental link back to the real copy breaks.
 - **Don't vendor a third-party skill that depends on files fetched at install time** (scripts/references pulled dynamically via `npx skills add`, not present even at the canonical source). Reference it as an external dependency instead — see how `kevin-wechat-skill/README.md` handles `fireworks-tech-graph` / `excalidraw-diagram-generator`. Only mirror a skill if what's at the source is actually complete.
 
+## Language
+
+Every skill's output content (SKILL.md prose, generated articles/briefs/notes, user-facing messages) is Chinese by default. Switch to English, or mix in English terms, only when there's a functional reason to: code, commands, file paths, API/library names, proper nouns without a natural Chinese term, or a direct quote from an English source. Don't default to English scaffolding (headers, explanations, boilerplate) just because it's faster to draft — that's not a functional reason.
+
 ## Syncing a mirrored skill
 
 Canonical homes: `~/.claude/skills/<name>` for skills, `~/Documents/Kevin-Brain/raw/publishing-pipeline` for the shared publish scripts. Both are readable directly from this environment — confirm with `ls`/`Read` before assuming a mirror is stale or incomplete. To update a mirror, diff the two copies manually and re-copy changed files; there's no automated drift detection, and the scripts in `publishing-pipeline/` still only actually run from the canonical vault (hardcoded relative paths to its `articles/`, `assets/`, `.venv`) — the copy here is for version history, not independent execution.
