@@ -39,6 +39,13 @@ WECHAT_CSS = """
   hr      { border: none; border-top: 1px solid #e8e8e8; margin: 16px 0; }
   strong  { font-weight: bold; color: #FF9966; }
   em      { font-style: italic; color: #555; }
+  .footnote { margin-top: 24px; }
+  .footnote hr { margin: 20px 0 12px; }
+  .footnote ol { padding-left: 20px; margin: 0; }
+  .footnote li { margin: 4px 0; line-height: 1.6; }
+  .footnote li p { font-size: 13px; color: #888; margin: 0; }
+  .footnote-ref { color: #FF9966; text-decoration: none; font-size: 12px; }
+  .footnote-backref { color: #FF9966; text-decoration: none; }
 </style>
 """
 
@@ -212,6 +219,12 @@ def _lists_to_p(html: str) -> str:
             elif tag == "li" and (self.in_ul or self.in_ol):
                 self.in_li = False
                 content = "".join(self.li_buf).strip()
+                # footnotes 扩展会把 <li> 内容包一层 <p>（"loose list"），
+                # 这里再套一层 <p> 会形成 <p><p>...</p></p> 嵌套，微信解析会截断，
+                # 数字/圆点跟内容错位——先拆掉这层内层 <p>，避免嵌套
+                inner_p = re.match(r"^<p[^>]*>(.*)</p>$", content, re.DOTALL)
+                if inner_p:
+                    content = inner_p.group(1)
                 li_style = (
                     "margin:6px 0;line-height:1.75;font-size:15px;color:#333;"
                     "padding-left:0;"
@@ -318,7 +331,7 @@ def _fix_pre_blocks(html: str) -> str:
 def md_to_html(md_text: str) -> str:
     body_html = markdown.markdown(
         md_text,
-        extensions=["tables", "fenced_code"],
+        extensions=["tables", "fenced_code", "footnotes"],
     )
     full_html = f"<html><head>{WECHAT_CSS}</head><body>{body_html}</body></html>"
     inliner = css_inline.CSSInliner()
