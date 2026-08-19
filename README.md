@@ -14,6 +14,7 @@ agent-skills/
 │   ├── kevin-book-research-planning/
 │   ├── kevin-wechat-topic-gen/
 │   ├── kevin-wechat-research/
+│   ├── kevin-wechat-proofreading/
 │   ├── write-article/
 │   ├── newsletter-digest/
 │   └── architecture-diagram/
@@ -49,6 +50,7 @@ agent-skills/
 | `kevin-book-research-planning` | 写书 | 自研 | 已建，未验证，未注册为可调用 skill |
 | `kevin-wechat-topic-gen` | 公众号 | 自研 | 已建，未验证 |
 | `kevin-wechat-research` | 公众号 | 自研 | 已建，未验证 |
+| `kevin-wechat-proofreading` | 公众号 | 自研 | 已建，未验证 |
 | `write-article` | 公众号 | 镜像 | **生产在用** |
 | `newsletter-digest` | 公众号 | 镜像 | **生产在用** |
 | `architecture-diagram` | 公众号（配图） | 镜像，完整（第三方，Cocoon AI） | 生产在用 |
@@ -74,7 +76,9 @@ npx skills add yizhiyanhua-ai/fireworks-tech-graph
 
 - [x] 选题生成 → `kevin-wechat-topic-gen`
 - [x] 深度调研 → `kevin-wechat-research`
-- [x] 写作 → 审校 → 配图 → 发布 → `write-article` / `newsletter-digest` / 3 个配图 skill
+- [x] 写作 → `write-article`
+- [x] AI味+细节审校 → `kevin-wechat-proofreading`（只管AI味和细节，事实核查是`write-article`自己的事，独立子agent跑）
+- [x] 配图 → 发布 → 3 个配图 skill / `newsletter-digest`（编译类走这个而不是`write-article`）
 
 **公众号流水线打包分享**（独立分支，目标是发布成通用包）：
 
