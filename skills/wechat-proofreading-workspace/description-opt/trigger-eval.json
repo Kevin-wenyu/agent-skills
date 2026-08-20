@@ -1,0 +1,22 @@
+[
+  {"query": "这篇稿子AI味有点重，帮我看看", "should_trigger": true},
+  {"query": "写完了，麻烦审校一下文笔", "should_trigger": true},
+  {"query": "帮我校对一下这篇公众号文章，看看有没有读起来很生硬、像AI写的地方", "should_trigger": true},
+  {"query": "这段是不是排比句用太多了，感觉有点像AI写的，帮我挑挑", "should_trigger": true},
+  {"query": "文章写完了先不发，帮我挑挑毛病，尤其是那种一眼能看出来是AI写的地方", "should_trigger": true},
+  {"query": "帮我看看这篇稿子的开头是不是又落入'随着XX的发展'这种套路了", "should_trigger": true},
+  {"query": "这篇稿子破折号是不是用太多了，感觉有点啰嗦，帮我数一下", "should_trigger": true},
+  {"query": "帮我把这篇文章过一遍，看看句子是不是太长、段落是不是太挤，手机上读起来累不累", "should_trigger": true},
+  {"query": "初稿写完了，麻烦换个独立的视角帮我看看有没有写歪，别用我刚才写作那个对话框接着看", "should_trigger": true},
+  {"query": "这篇稿子读起来是不是有点'一方面另一方面'那味儿，还有点'不是A是B'说太多次了，帮我挑挑", "should_trigger": true},
+  {"query": "帮我查一下这篇文章里引用的那个GitHub star数，163802这个数字对不对，链接打得开吗", "should_trigger": false},
+  {"query": "这篇文章的标题不够吸引人，帮我按咱们的标题公式想几个新标题", "should_trigger": false},
+  {"query": "帮我看看这段Python代码有没有bug，能不能跑起来", "should_trigger": false},
+  {"query": "这篇文章讲的技术方案是不是站得住脚，我担心里面的判断逻辑有问题，不是文笔问题", "should_trigger": false},
+  {"query": "帮我把这篇英文文章翻译成中文，顺便看看翻译后的中文通不通顺", "should_trigger": false},
+  {"query": "这篇文章还没写完，卡在倒数第二段了，帮我接着往下写结尾", "should_trigger": false},
+  {"query": "这个是我们产品的社区评论区截图整理，麻烦看看里面有没有攻击性言论需要处理", "should_trigger": false},
+  {"query": "publish.py跑起来报错了，日志里说errcode 45166，麻烦看看是什么问题", "should_trigger": false},
+  {"query": "这篇稿子里提到的三个案例，麻烦分别再深挖一下，多找点我自己的经验支撑，感觉论据有点单薄", "should_trigger": false},
+  {"query": "这篇是从X上编译整理的技术周刊，麻烦按咱们的公众号排版规范整理一下格式", "should_trigger": false}
+]
