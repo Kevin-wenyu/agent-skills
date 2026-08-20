@@ -1,5 +1,5 @@
 ---
-name: wechat-proofreading
+name: proofreading
 description: |
   公众号文章AI味+细节审校技能。write-article写完初稿后，当用户说"审校一下""看看AI味重不重""帮我校对一下文笔"时使用。只查AI味和阅读细节，不查事实（write-article的事实硬底线和check.py已经覆盖，这里重复没意义）。用独立子agent跑，不是同一个写作上下文自己检查自己。
 ---

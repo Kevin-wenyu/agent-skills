@@ -1,15 +1,15 @@
-# wechat-proofreading Eval 记录
+# wechat/proofreading Eval 记录
 
-2026-08-19，用 skill-creator 的 Eval 模式对 `wechat-proofreading` 跑的一轮验证，记录在这里方便以后复用/复跑，不用每次现造测试文本。
+2026-08-19，用 skill-creator 的 Eval 模式对 `wechat/proofreading` 跑的一轮验证，记录在这里方便以后复用/复跑，不用每次现造测试文本。
 
 ## 测试设置
 
-`iteration-1/` 下两组测试，每组分别跑"有skill"（读`skills/wechat-proofreading/SKILL.md`）和"没有skill"（Claude凭自己判断，不给任何skill）两个版本，4个独立子agent并行跑：
+`iteration-1/` 下两组测试，每组分别跑"有skill"（读`wechat/proofreading/SKILL.md`）和"没有skill"（Claude凭自己判断，不给任何skill）两个版本，4个独立子agent并行跑：
 
-- `eval-0-broad-coverage`：故意写的压力测试文本（`skills/wechat-proofreading/evals/files/`），塞了多种AI味问题，测覆盖面。
+- `eval-0-broad-coverage`：故意写的压力测试文本（`wechat/proofreading/evals/files/`），塞了多种AI味问题，测覆盖面。
 - `eval-1-precision-check`：故意写干净的文本，测精度——会不会为了"找出问题"而误伤本来就对的写法。
 
-断言定义在 `skills/wechat-proofreading/evals/evals.json`。
+断言定义在 `wechat/proofreading/evals/evals.json`。
 
 ## 关键发现
 
@@ -27,8 +27,8 @@
 # 描述触发优化（可选，独立于上面）：
 cd ~/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown/skills/skill-creator
 python3 -m scripts.run_loop \
-  --eval-set <repo>/skills/wechat-proofreading-workspace/description-opt/trigger-eval.json \
-  --skill-path <repo>/skills/wechat-proofreading \
+  --eval-set <repo>/wechat/proofreading-workspace/description-opt/trigger-eval.json \
+  --skill-path <repo>/wechat/proofreading \
   --model claude-sonnet-5 \
   --max-iterations 3 --verbose
 ```

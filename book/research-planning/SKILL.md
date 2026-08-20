@@ -1,5 +1,5 @@
 ---
-name: book-research-planning
+name: research-planning
 description: |
   技术书籍写作流水线的第1阶段技能（共5阶段：调研与规划→内容写作→构建与组装→版本管理→多格式输出）。当用户提到"写一本书""这本书的调研""定章节结构""书的大纲""book outline""book research"时使用。产出 PROJECT.md 和逐章调研笔记，作为"内容写作"阶段的输入。本skill只负责规划和调研，不写正文。
 ---

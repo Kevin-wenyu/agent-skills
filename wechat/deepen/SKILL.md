@@ -1,7 +1,7 @@
 ---
-name: wechat-deepen
+name: deepen
 description: |
-  公众号文章拔高技能。write-article写完初稿之后、wechat-proofreading之前，当用户说"再深一点""拔高一下""这篇有点浅"时使用。检查文章的核心判断有没有Kevin自己的专业经验支撑，没有就问Kevin本人要，不替Kevin编。不是扩写或堆案例，是给判断找到只有Kevin能提供的分量。
+  公众号文章拔高技能。write-article写完初稿之后、proofreading之前，当用户说"再深一点""拔高一下""这篇有点浅"时使用。检查文章的核心判断有没有Kevin自己的专业经验支撑，没有就问Kevin本人要，不替Kevin编。不是扩写或堆案例，是给判断找到只有Kevin能提供的分量。
 ---
 
 # 公众号文章拔高
@@ -52,5 +52,5 @@ description: |
 - 不编造Kevin的个人经历、案例、经手过的项目——找不到真实支撑，就明确告诉Kevin这篇的判断只是直觉，不装深。
 - 不是每篇文章都需要这个skill——分支A"实测过"、分支B技术案例类，判断本身已经有硬支撑，这个skill基本没事可做。
 - 不在这个skill里改声音、结构、事实核查规则，那些是`write-article`的事。
-- 跟`wechat-proofreading`的顺序：先跑这个，`wechat-proofreading`的AI味+细节审校在后面跑——这个skill可能改动判断句所在的整段内容，如果顺序反了，前面刚打磨完的措辞会被这一步的内容修改推翻，等于白打磨一轮。
-- 这个skill要跟Kevin互动着问，不是起独立子agent默默产出报告——`wechat-proofreading`需要独立视角所以起子agent，这个skill需要的是Kevin本人的真实经历，只有本人能给，子agent问不出来。
+- 跟`proofreading`的顺序：先跑这个，`proofreading`的AI味+细节审校在后面跑——这个skill可能改动判断句所在的整段内容，如果顺序反了，前面刚打磨完的措辞会被这一步的内容修改推翻，等于白打磨一轮。
+- 这个skill要跟Kevin互动着问，不是起独立子agent默默产出报告——`proofreading`需要独立视角所以起子agent，这个skill需要的是Kevin本人的真实经历，只有本人能给，子agent问不出来。
