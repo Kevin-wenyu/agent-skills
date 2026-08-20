@@ -1,0 +1,10 @@
+{
+  "eval_id": 1,
+  "eval_name": "precision-check",
+  "prompt": "帮我审校一下 evals/files/eval-1-precision-check.md 这段文字有没有AI味问题。",
+  "assertions": [
+    "不应该把'我用它把一个还在维护的老项目过了一遍'这类个人经历陈述误判为AI味问题",
+    "不应该为了'找出问题'而对干净的文本过度挑剔、无中生有",
+    "如果给出建议，建议数量应明显少于eval-0（预期0-1条，且都是真实可辩护的细节问题）"
+  ]
+}
